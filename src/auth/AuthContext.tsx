@@ -26,15 +26,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = (userId: string, password: string): { success: boolean; error?: string } => {
-    const account = DEMO_ACCOUNTS[userId as keyof typeof DEMO_ACCOUNTS];
+    const trimmedId = userId.trim();
+    const account = DEMO_ACCOUNTS[trimmedId as keyof typeof DEMO_ACCOUNTS];
     if (!account) {
-      return { success: false, error: 'Invalid user ID' };
+      return { success: false, error: 'Invalid user ID. Please check and try again.' };
     }
+
+    if (selectedRole && account.user.role !== selectedRole) {
+      return {
+        success: false,
+        error: `This ID belongs to a ${account.user.role} account. Please select the correct role.`,
+      };
+    }
+
     if (account.password !== password) {
-      return { success: false, error: 'Invalid password' };
+      return { success: false, error: 'Invalid password. Please check and try again.' };
     }
+
     const userData = account.user;
     setUser(userData);
+    setSelectedRole(userData.role);
     localStorage.setItem('user', JSON.stringify(userData));
     return { success: true };
   };
