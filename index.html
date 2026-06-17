@@ -4,6 +4,50 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UDHRS Health Portal</title>
+    <script>
+      // Error overlay: only shown when an uncaught error or unhandled rejection occurs.
+      (function () {
+        function showOverlay(msg) {
+          try {
+            if (document.getElementById('__error_overlay')) return;
+            var d = document.createElement('div');
+            d.id = '__error_overlay';
+            d.style.position = 'fixed';
+            d.style.left = '12px';
+            d.style.right = '12px';
+            d.style.top = '12px';
+            d.style.zIndex = 999999;
+            d.style.background = 'rgba(255,16,16,0.95)';
+            d.style.color = 'white';
+            d.style.padding = '12px 16px';
+            d.style.borderRadius = '8px';
+            d.style.fontFamily = 'system-ui, Arial, sans-serif';
+            d.style.boxShadow = '0 6px 30px rgba(0,0,0,0.3)';
+            d.style.maxHeight = '60vh';
+            d.style.overflow = 'auto';
+            d.style.whiteSpace = 'pre-wrap';
+            d.textContent = msg;
+            document.addEventListener('click', function () {
+              var el = document.getElementById('__error_overlay');
+              if (el) el.style.display = 'none';
+            });
+            document.body.appendChild(d);
+          } catch (e) {
+            /* ignore */
+          }
+        }
+
+        window.addEventListener('error', function (ev) {
+          var m = ev && ev.error && ev.error.stack ? ev.error.stack : (ev && ev.message) || String(ev);
+          showOverlay('Uncaught error:\n' + m);
+        });
+
+        window.addEventListener('unhandledrejection', function (ev) {
+          var reason = ev && ev.reason ? (ev.reason.stack || ev.reason) : ev;
+          showOverlay('Unhandled promise rejection:\n' + String(reason));
+        });
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
