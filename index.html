@@ -52,5 +52,41 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      // Diagnostic badge: appears only when #root is still empty after load
+      (function(){
+        function showBadge(msg){
+          try{
+            var b = document.getElementById('__diagnostic_badge');
+            if(b) return; 
+            b = document.createElement('div');
+            b.id = '__diagnostic_badge';
+            b.textContent = msg;
+            b.style.position = 'fixed';
+            b.style.right = '12px';
+            b.style.bottom = '12px';
+            b.style.background = 'rgba(255,190,0,0.95)';
+            b.style.color = '#111';
+            b.style.padding = '6px 10px';
+            b.style.borderRadius = '8px';
+            b.style.fontFamily = 'system-ui, Arial, sans-serif';
+            b.style.zIndex = 999999;
+            b.style.cursor = 'pointer';
+            b.onclick = function(){ b.style.display='none'; };
+            document.body.appendChild(b);
+          }catch(e){}
+        }
+        window.addEventListener('load', function(){
+          setTimeout(function(){
+            try{
+              var root = document.getElementById('root');
+              if(!root || (root && root.children.length === 0 && (root.textContent||'').trim()==='')){
+                showBadge('Diagnostic: root empty');
+              }
+            }catch(e){ showBadge('Diagnostic: error checking root'); }
+          },1500);
+        });
+      })();
+    </script>
   </body>
 </html>
